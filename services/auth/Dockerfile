@@ -4,7 +4,7 @@
 FROM node:20-alpine AS builder
 
 RUN apk add --no-cache libc6-compat python3 make g++
-RUN npm install -g pnpm@8.6.12
+RUN npm install -g pnpm@9.12.0
 
 WORKDIR /app
 
@@ -35,7 +35,7 @@ RUN pnpm --filter @bistrobrain/auth-service build
 FROM node:20-alpine AS production
 
 RUN apk add --no-cache dumb-init wget
-RUN npm install -g pnpm@8.6.12
+RUN npm install -g pnpm@9.12.0
 
 WORKDIR /app
 

@@ -1,6 +1,6 @@
-﻿FROM node:20-alpine AS builder
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat python3 make g++
-RUN npm install -g pnpm@8.6.12
+RUN npm install -g pnpm@9.12.0
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/database/package.json ./packages/database/
@@ -13,7 +13,7 @@ RUN pnpm --filter @bistrobrain/reporting-service build
 
 FROM node:20-alpine AS production
 RUN apk add --no-cache dumb-init wget
-RUN npm install -g pnpm@8.6.12
+RUN npm install -g pnpm@9.12.0
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/database/package.json ./packages/database/
