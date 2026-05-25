@@ -84,8 +84,8 @@ services:
   # ============================================================
   migrate:
     build:
-      context: ./packages/database
-      dockerfile: Dockerfile.migrate
+      context: .
+      dockerfile: packages/database/Dockerfile.migrate
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/bistrobrain
     depends_on:
