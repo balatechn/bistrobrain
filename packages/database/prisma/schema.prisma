@@ -1113,6 +1113,7 @@ model PurchaseInvoice {
   updatedAt       DateTime  @updatedAt
 
   vendor          Vendor    @relation(fields: [vendorId], references: [id])
+  purchaseOrder   PurchaseOrder?  @relation(fields: [purchaseOrderId], references: [id])
   payments        VendorPayment[]
 
   @@unique([tenantId, invoiceNumber])
