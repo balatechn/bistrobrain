@@ -1,11 +1,13 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
-RUN apk add --no-cache libc6-compat python3 make g++
+RUN apk add --no-cache libc6-compat openssl dumb-init python3 make g++
 RUN npm install -g pnpm@9.12.0
 
 WORKDIR /app
+
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/database/package.json ./packages/database/
+COPY packages/database/prisma ./packages/database/prisma/
 COPY services/pos/package.json ./services/pos/
 
 RUN NODE_ENV=development pnpm install --frozen-lockfile
@@ -14,23 +16,10 @@ COPY packages/database/ ./packages/database/
 COPY services/pos/ ./services/pos/
 
 RUN pnpm --filter @bistrobrain/database db:generate
+RUN pnpm --filter @bistrobrain/database build
 RUN pnpm --filter @bistrobrain/pos-service build
 
-FROM node:20-alpine AS production
-RUN apk add --no-cache dumb-init wget
-RUN npm install -g pnpm@9.12.0
-WORKDIR /app
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-COPY packages/database/package.json ./packages/database/
-COPY services/pos/package.json ./services/pos/
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts
-COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/packages/database/dist ./packages/database/dist
-COPY --from=builder /app/services/pos/dist ./services/pos/dist
 ENV NODE_ENV=production
 EXPOSE 4002
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "services/pos/dist/main.js"]
-
-
