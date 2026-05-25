@@ -23,7 +23,7 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/database/package.json ./packages/database/
 COPY services/pos/package.json ./services/pos/
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/packages/database/dist ./packages/database/dist
@@ -32,3 +32,4 @@ ENV NODE_ENV=production
 EXPOSE 4002
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "services/pos/dist/main.js"]
+

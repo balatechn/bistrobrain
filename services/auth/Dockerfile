@@ -16,6 +16,7 @@ COPY turbo.json ./
 COPY packages/database/package.json ./packages/database/
 COPY services/auth/package.json ./services/auth/
 
+COPY packages/database/prisma ./packages/database/prisma/
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
 
@@ -43,7 +44,7 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/database/package.json ./packages/database/
 COPY services/auth/package.json ./services/auth/
 
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
@@ -56,3 +57,4 @@ EXPOSE 4001
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "services/auth/dist/main.js"]
+
