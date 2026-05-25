@@ -71,3 +71,5 @@ public/uploads/
 tmp/
 temp/
 .temp/
+*.ps1
+response.json
