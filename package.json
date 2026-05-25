@@ -21,7 +21,7 @@
     "docker:down": "docker-compose down",
     "docker:build": "docker-compose build",
     "docker:logs": "docker-compose logs -f",
-    "prepare": "husky install"
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') require('child_process').execSync('husky install', {stdio:'inherit'})\""
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
