@@ -1,0 +1,73 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# IDE
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Turbo
+.turbo
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma
+packages/database/node_modules/
+
+# Docker
+.dockerignore
+
+# Keys & Certs
+*.pem
+*.key
+*.cert
+*.crt
+
+# Uploads (local dev)
+uploads/
+public/uploads/
+
+# Temp
+tmp/
+temp/
+.temp/
