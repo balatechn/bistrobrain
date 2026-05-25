@@ -8,7 +8,7 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/database/package.json ./packages/database/
 COPY services/pos/package.json ./services/pos/
 
-RUN pnpm install --frozen-lockfile
+RUN NODE_ENV=development pnpm install --frozen-lockfile
 
 COPY packages/database/ ./packages/database/
 COPY services/pos/ ./services/pos/
@@ -32,4 +32,5 @@ ENV NODE_ENV=production
 EXPOSE 4002
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "services/pos/dist/main.js"]
+
 

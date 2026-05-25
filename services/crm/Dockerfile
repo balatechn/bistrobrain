@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/database/package.json ./packages/database/
 COPY services/crm/package.json ./services/crm/
-RUN pnpm install --frozen-lockfile
+RUN NODE_ENV=development pnpm install --frozen-lockfile
 COPY packages/database/ ./packages/database/
 COPY services/crm/ ./services/crm/
 RUN pnpm --filter @bistrobrain/database db:generate
@@ -27,4 +27,5 @@ ENV NODE_ENV=production
 EXPOSE 4005
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "services/crm/dist/main.js"]
+
 

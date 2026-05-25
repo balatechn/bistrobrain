@@ -18,7 +18,7 @@ COPY services/auth/package.json ./services/auth/
 
 COPY packages/database/prisma ./packages/database/prisma/
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN NODE_ENV=development pnpm install --frozen-lockfile
 
 # Copy source code
 COPY packages/database/ ./packages/database/
@@ -57,4 +57,5 @@ EXPOSE 4001
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "services/auth/dist/main.js"]
+
 
