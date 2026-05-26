@@ -13,7 +13,10 @@ export class InventoryService {
     const where: any = { tenantId, branchId, deletedAt: null };
     if (search) where.name = { contains: search, mode: 'insensitive' };
     if (categoryId) where.categoryId = categoryId;
-    if (lowStock === 'true') where.currentStock = { lte: this.prisma.inventoryItem.fields.minStock };
+    if (lowStock === 'true') {
+      const lowIds: Array<{id: string}> = await this.prisma.$queryRaw`SELECT id FROM inventory_items WHERE "tenantId" = ${tenantId} AND "branchId" = ${branchId} AND "deletedAt" IS NULL AND "currentStock" <= "minStock"`;
+      where.id = { in: lowIds.map((r: any) => r.id) };
+    }
 
     const [items, total] = await Promise.all([
       this.prisma.inventoryItem.findMany({ where, skip, take: Number(limit), orderBy: { name: 'asc' } }),

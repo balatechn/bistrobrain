@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { PosGateway } from '../pos.gateway';
 
 @Injectable()
@@ -76,7 +75,7 @@ export class OrdersService {
           customerId: dto.customerId,
           createdById: userId,
           orderNumber,
-          orderType: dto.orderType || 'DINE_IN',
+          orderType: (dto.orderType || 'DINE_IN') as any,
           status: 'PENDING',
           paymentStatus: 'UNPAID',
           subtotal,
@@ -86,7 +85,7 @@ export class OrdersService {
           totalAmount,
           guestCount: dto.guestCount || 1,
           notes: dto.notes,
-          source: dto.source || 'POS',
+          source: (dto.source || 'POS') as any,
           orderItems: {
             create: orderItems,
           },

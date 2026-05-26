@@ -6,7 +6,7 @@ import { PosGateway } from '../pos.gateway';
 export class KotService {
   constructor(private prisma: PrismaService, private gateway: PosGateway) {}
 
-  async createKOT(orderId: string, tenantId: string, branchId: string) {
+  async createKOT(orderId: string, tenantId: string, branchId: string, userId: string = 'system') {
     const order = await this.prisma.order.findFirst({
       where: { id: orderId, tenantId },
       include: { orderItems: { include: { menuItem: true } } },
@@ -22,18 +22,18 @@ export class KotService {
           branchId,
           orderId,
           kotNumber,
+          createdById: userId,
           status: 'PENDING',
-          kotItems: {
+          items: {
             create: order.orderItems.map((item) => ({
-              tenantId,
               menuItemId: item.menuItemId,
-              menuItemName: item.menuItem.name,
+              name: item.menuItem.name,
               quantity: item.quantity,
               notes: item.notes,
             })),
           },
         },
-        include: { kotItems: true },
+        include: { items: true },
       });
       await tx.order.update({ where: { id: orderId }, data: { status: 'IN_KITCHEN' } });
       return k;
@@ -45,8 +45,8 @@ export class KotService {
 
   async getActiveKOTs(tenantId: string, branchId: string) {
     return this.prisma.kOT.findMany({
-      where: { tenantId, branchId, status: { not: 'SERVED' } },
-      include: { kotItems: true, order: { select: { orderNumber: true, orderType: true, table: { select: { name: true } } } } },
+      where: { tenantId, branchId, status: { notIn: ['COMPLETED', 'CANCELLED'] as any[] } },
+      include: { items: true, order: { select: { orderNumber: true, orderType: true, table: { select: { name: true } } } } },
       orderBy: { createdAt: 'asc' },
     });
   }

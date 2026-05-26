@@ -4,7 +4,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json ./
-RUN npm install -g pnpm@9.12.0 && pnpm install --no-frozen-lockfile
+RUN npm install -g pnpm@9.12.0 && NODE_ENV=development pnpm install --no-frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app

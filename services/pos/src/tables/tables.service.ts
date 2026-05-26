@@ -7,7 +7,7 @@ export class TablesService {
 
   async getTables(tenantId: string, branchId: string) {
     return this.prisma.table.findMany({
-      where: { tenantId, branchId, deletedAt: null },
+      where: { tenantId, branchId },
       orderBy: [{ section: { name: 'asc' } }, { name: 'asc' }],
       include: { section: { select: { name: true } } },
     });

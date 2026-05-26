@@ -5,7 +5,7 @@ RUN npm install -g pnpm@9.12.0
 
 WORKDIR /app
 
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.json ./
 COPY packages/database/package.json ./packages/database/
 COPY packages/database/prisma ./packages/database/prisma/
 COPY services/hr/package.json ./services/hr/

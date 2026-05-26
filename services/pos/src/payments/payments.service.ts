@@ -22,7 +22,7 @@ export class PaymentsService {
           method: data.method as any,
           referenceNumber: data.referenceNumber,
           notes: data.notes,
-          status: 'SUCCESS',
+          status: 'PAID' as any,
         },
       });
       await tx.order.update({
@@ -32,7 +32,7 @@ export class PaymentsService {
       if (order.tableId) {
         await tx.table.update({ where: { id: order.tableId }, data: { status: 'AVAILABLE' } });
       }
-      this.gateway.emitOrderCompleted(tenantId, order.branchId, orderId);
+      this.gateway.emitOrderCompleted(tenantId, order.branchId, { orderId } as object);
       return payment;
     });
   }
