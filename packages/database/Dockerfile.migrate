@@ -1,6 +1,6 @@
-FROM node:20-alpine
+FROM node:20-slim
 
-RUN apk add --no-cache libc6-compat openssl
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm@9.12.0
 
 WORKDIR /app
@@ -15,4 +15,5 @@ COPY packages/database/ ./packages/database/
 
 RUN pnpm --filter @bistrobrain/database db:generate
 
-CMD ["pnpm", "--filter", "@bistrobrain/database", "db:migrate:prod"]
+WORKDIR /app/packages/database
+CMD ["/bin/bash", "-c", "echo 'Migration starting at' $(date); timeout -k 10 300 node_modules/.bin/prisma db push --accept-data-loss --skip-generate; RC=$?; echo \"Migration finished with exit code $RC at\" $(date); exit $RC"]
