@@ -1,6 +1,6 @@
 FROM node:20-slim
 
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y openssl postgresql-client ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm@9.12.0
 
 WORKDIR /app
@@ -13,7 +13,31 @@ RUN NODE_ENV=development pnpm install --frozen-lockfile
 
 COPY packages/database/ ./packages/database/
 
-RUN pnpm --filter @bistrobrain/database db:generate
-
 WORKDIR /app/packages/database
-CMD ["/bin/bash", "-c", "echo 'Migration starting at' $(date); timeout -k 10 300 node_modules/.bin/prisma db push --accept-data-loss --skip-generate; RC=$?; echo \"Migration finished with exit code $RC at\" $(date); exit $RC"]
+
+# Generate full SQL schema at BUILD time (no DB connection needed for --from-empty).
+# This avoids running the Prisma query engine at runtime, which was hanging silently.
+RUN node_modules/.bin/prisma migrate diff \
+      --from-empty \
+      --to-schema-datamodel prisma/schema.prisma \
+      --script > /app/init.sql && \
+    echo "Generated init.sql: $(wc -l < /app/init.sql) lines, $(wc -c < /app/init.sql) bytes"
+
+# At runtime: verify DNS + postgres, then apply SQL via psql.
+# psql is far more reliable than the Prisma JS runtime for this task.
+CMD ["/bin/bash", "-c", "set -e; \
+echo '[migrate] start' $(date); \
+echo '[migrate] DNS check: postgres ->'; getent hosts postgres || (echo '[migrate] FAIL DNS' && exit 1); \
+echo '[migrate] waiting for postgres (up to 120s)'; \
+for i in $(seq 1 60); do pg_isready -d \"$DATABASE_URL\" -q && { echo \"[migrate] postgres ready after ${i} attempts\"; break; }; sleep 2; done; \
+pg_isready -d \"$DATABASE_URL\" || (echo '[migrate] FAIL postgres unreachable' && exit 1); \
+echo '[migrate] checking existing schema'; \
+TABLE_COUNT=$(psql \"$DATABASE_URL\" -tAc \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public'\"); \
+echo \"[migrate] existing public tables: $TABLE_COUNT\"; \
+if [ \"$TABLE_COUNT\" -gt 5 ]; then \
+  echo '[migrate] schema already applied, skipping'; \
+else \
+  echo '[migrate] applying init.sql via psql'; \
+  psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f /app/init.sql; \
+fi; \
+echo '[migrate] done' $(date)"]
