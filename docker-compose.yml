@@ -239,37 +239,7 @@ services:
       - "4010"
 
   # ============================================================
-  # FRONTEND APPS
-  # ============================================================
-  web:
-    build:
-      context: apps/web
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost}
-        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-http://localhost}
-    container_name: bistrobrain-web
-    restart: unless-stopped
-    expose:
-      - "3000"
-    networks:
-      - bistrobrain-network
-
-  admin:
-    build:
-      context: apps/admin
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost}
-    container_name: bistrobrain-admin
-    restart: unless-stopped
-    expose:
-      - "3001"
-    networks:
-      - bistrobrain-network
-
-  # ============================================================
-  # API GATEWAY (Nginx)
+  # API GATEWAY (Nginx) — frontend served from Vercel
   # ============================================================
   gateway:
     build:
@@ -292,8 +262,6 @@ services:
       - hr
       - reporting
       - notifications
-      - web
-      - admin
     networks:
       - bistrobrain-network
 

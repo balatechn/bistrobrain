@@ -1,0 +1,6 @@
+{
+  "framework": "nextjs",
+  "installCommand": "cd ../.. && npm install -g pnpm@9.12.0 && pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm --filter @bistrobrain/admin build",
+  "outputDirectory": ".next"
+}
