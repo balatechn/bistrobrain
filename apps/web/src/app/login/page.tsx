@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Eye, EyeOff, ChefHat, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
@@ -50,15 +51,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md animate-fade-in">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-600 rounded-2xl mb-4 shadow-lg shadow-brand-900/50">
-            <ChefHat className="w-8 h-8 text-white" />
+    <div className="min-h-screen flex">
+      {/* Left panel – branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-900 via-orange-900 to-red-950 flex-col items-center justify-center p-12 relative overflow-hidden">
+        {/* decorative circles */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-700/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-red-800/20 rounded-full blur-3xl" />
+
+        <div className="relative z-10 text-center max-w-sm">
+          <Image
+            src="https://www.bistrobrain.com/wp-content/uploads/2025/02/cropped-Logo-01-1.png"
+            alt="Bistro Brain"
+            width={200}
+            height={80}
+            className="mx-auto mb-8 drop-shadow-2xl"
+            unoptimized
+          />
+          <h2 className="text-3xl font-bold text-white leading-tight">
+            Your Turnkey Partner in Building Profitable F&amp;B Businesses
+          </h2>
+          <p className="text-amber-200/80 mt-4 text-sm leading-relaxed">
+            Smart restaurant management — POS, kitchen display, inventory, finance and CRM, all in one platform.
+          </p>
+
+          <div className="mt-10 grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-2xl font-bold text-amber-300">75+</p>
+              <p className="text-xs text-amber-200/60 mt-1">Projects Delivered</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-amber-300">24+</p>
+              <p className="text-xs text-amber-200/60 mt-1">Years Experience</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-amber-300">99%</p>
+              <p className="text-xs text-amber-200/60 mt-1">Success Rate</p>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-white">Bistro Brain</h1>
-          <p className="text-slate-400 mt-1">Restaurant Management Platform</p>
+        </div>
+      </div>
+
+      {/* Right panel – form */}
+      <div className="flex-1 bg-slate-950 flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        {/* Mobile logo */}
+        <div className="lg:hidden text-center mb-8">
+          <Image
+            src="https://www.bistrobrain.com/wp-content/uploads/2025/02/cropped-Logo-01-1.png"
+            alt="Bistro Brain"
+            width={160}
+            height={60}
+            className="mx-auto mb-3"
+            unoptimized
+          />
+          <p className="text-slate-400 text-sm">Restaurant Management Platform</p>
         </div>
 
         {/* Card */}
@@ -139,15 +185,16 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <a href="/register" className="text-sm text-brand-400 hover:text-brand-300 transition-colors">
+            <a href="/register" className="text-sm text-amber-400 hover:text-amber-300 transition-colors">
               New restaurant? Start free 14-day trial →
             </a>
           </div>
         </div>
 
         <p className="text-center text-slate-500 text-sm mt-6">
-          © 2026 Bistro Brain. All rights reserved.
+          © 2026 Bistro Brain Hospitality. All rights reserved.
         </p>
+      </div>
       </div>
     </div>
   );
